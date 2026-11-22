@@ -351,9 +351,10 @@ export function Pestanas({ rol, activa }: { rol: 'empleado' | 'gerente'; activa:
   const items =
     rol === 'gerente'
       ? [
-          { a: '/gerente', icono: ListBullets, texto: 'Por resolver' },
+          { a: '/gerente', icono: ListBullets, texto: 'La fila' },
           { a: '/gerente/semana', icono: CalendarBlank, texto: 'La semana' },
           { a: '/gerente/resueltas', icono: Checks, texto: 'Resueltas' },
+          { a: '/mi-cuenta', icono: User, texto: 'Mi cuenta' },
         ]
       : [
           { a: '/', icono: House, texto: 'Inicio' },
