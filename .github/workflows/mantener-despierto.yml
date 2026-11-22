@@ -1,0 +1,24 @@
+name: Mantener Supabase despierto
+
+# El plan gratis de Supabase pausa el proyecto tras una semana sin
+# actividad. Esta consulta pesa nada y lo mantiene vivo.
+
+on:
+  schedule:
+    - cron: '17 13 * * 3' # miércoles, 13:17 UTC
+  workflow_dispatch:
+
+jobs:
+  tocar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Una consulta liviana
+        run: |
+          codigo=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ vars.VITE_SUPABASE_URL }}/rest/v1/tiendas?select=id&limit=1" \
+            -H "apikey: ${{ vars.VITE_SUPABASE_ANON_KEY }}")
+          echo "Supabase respondió $codigo"
+          if [ "$codigo" != "200" ]; then
+            echo "::error::Supabase no respondió 200"
+            exit 1
+          fi
