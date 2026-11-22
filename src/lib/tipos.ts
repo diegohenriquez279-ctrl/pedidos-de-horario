@@ -102,8 +102,10 @@ export const ETIQUETA_CONTRATO_CORTA: Record<Contrato, string> = {
   por_hora: 'Por hora',
 }
 
+// `turno` es *pedir* un turno, no cambiar uno ya asignado: cuando se pide,
+// el horario de esa semana todavía no existe.
 export const ETIQUETA_TIPO: Record<Tipo, string> = {
   dia_libre: 'Día libre',
-  turno: 'Cambio de turno',
+  turno: 'Petición de turno',
   otro: 'Otra cosa',
 }

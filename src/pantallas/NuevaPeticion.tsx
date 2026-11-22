@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { PencilSimple, Warning } from '@phosphor-icons/react'
 import { useSesion } from '../sesion'
 import {
-  contarChoques,
   crearPeticion,
   editarPeticion,
   estadoVentana,
@@ -16,7 +15,7 @@ import {
 } from '../lib/api'
 import { mensajeDeError } from '../lib/errores'
 import { diasDesdeHoy, diasDeSemana, rangoSemana } from '../lib/fechas'
-import { ETIQUETA_AREA, ETIQUETA_TIPO, type Prioridad, type Tipo } from '../lib/tipos'
+import { ETIQUETA_TIPO, type Prioridad, type Tipo } from '../lib/tipos'
 import {
   BarraSuperior,
   Boton,
@@ -78,13 +77,6 @@ export default function NuevaPeticion({
       ? diasDeSemana(ventana.data.semana_inicio)
       : diasDesdeHoy(ventana.data.hoy, ventana.data.semana_fin)
   }, [ventana.data, prioridad])
-
-  const choques = useQuery({
-    queryKey: ['choques', fechas],
-    queryFn: () => contarChoques(fechas),
-    enabled: fechas.length > 0,
-    staleTime: 10_000,
-  })
 
   const vistaDibujo = useMemo(
     () => (dibujoBlob ? URL.createObjectURL(dibujoBlob) : dibujoPrevio),
@@ -155,8 +147,6 @@ export default function NuevaPeticion({
       </Pantalla>
     )
   }
-
-  const avisos = (choques.data ?? []).filter((c) => c.cuantas > 0)
 
   return (
     <Pantalla>
@@ -244,21 +234,6 @@ export default function NuevaPeticion({
             </p>
           )}
 
-          {avisos.length > 0 && perfil && (
-            <div className="mt-3 flex items-start gap-2 rounded-papel border-[1.5px] border-rojo bg-[#fff4f5] px-3 py-2.5">
-              <Warning size={19} weight="bold" className="mt-0.5 flex-none text-rojo" />
-              <p className="m-0 text-[13.5px] leading-snug text-[#5a2b2b]">
-                <b className="font-bold text-rojo-hondo">
-                  {avisos.length === 1
-                    ? `Ya hay ${avisos[0].cuantas} ${avisos[0].cuantas === 1 ? 'petición' : 'peticiones'} en ${ETIQUETA_AREA[perfil.area].toLowerCase()} para ese día.`
-                    : `Ya hay peticiones en ${ETIQUETA_AREA[perfil.area].toLowerCase()} para ${avisos.length} de esos días.`}
-                </b>{' '}
-                {avisos.length === 1 && avisos[0].cuantas === 1
-                  ? 'Podés mandar la tuya igual, pero esa llegó antes.'
-                  : 'Podés mandar la tuya igual, pero las otras llegaron antes.'}
-              </p>
-            </div>
-          )}
         </div>
 
         {prioridad === 'normal' && (
