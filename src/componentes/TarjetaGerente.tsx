@@ -1,7 +1,7 @@
 import { Check, X } from '@phosphor-icons/react'
 import { diaConMes, hace } from '../lib/fechas'
 import { ETIQUETA_AREA, ETIQUETA_CONTRATO_CORTA, type Estado, type PeticionDeLaGerente } from '../lib/tipos'
-import { Chip, MarcaEmergencia, Sello } from './piezas'
+import { Chip, Comentario, MarcaEmergencia, Sello } from './piezas'
 import { MiniDibujo } from './Papelito'
 
 export default function TarjetaGerente({
@@ -63,6 +63,10 @@ export default function TarjetaGerente({
         </div>
 
         {peticion.dibujo_path && <MiniDibujo ruta={peticion.dibujo_path} texto="Mandó un dibujo" />}
+
+        {resuelta && peticion.comentario_gerente && (
+          <Comentario>{peticion.comentario_gerente}</Comentario>
+        )}
       </button>
 
       {alResolver && !resuelta && (

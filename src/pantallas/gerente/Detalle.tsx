@@ -88,7 +88,7 @@ export default function Detalle() {
       <Contenido className="flex flex-col">
         <BarraSuperior
           titulo="Petición"
-          volver="/gerente"
+          volver={() => navegar(-1)}
           derecha={
             p.prioridad === 'emergencia' ? (
               <span className="text-[12px] font-bold text-rojo-claro">Emergencia</span>
