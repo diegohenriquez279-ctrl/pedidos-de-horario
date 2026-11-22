@@ -47,3 +47,19 @@ export function cuentaPorDia(lista: PeticionDeLaGerente[], dias: string[]): Celd
 }
 
 export const hayChoque = (c: CeldaDia) => c.cocina >= 2 || c.servicio >= 2
+
+/**
+ * Qué semana enseñar en el tablero. Normalmente es la semana objetivo de la
+ * ventana, pero el fin de semana —cuando la gerente arma el horario— esa
+ * cuenta ya avanzó y las peticiones que tiene en la mano son de la semana
+ * anterior. Así que manda la semana de las peticiones que hay.
+ */
+export function semanaDominante(lista: PeticionDeLaGerente[], porDefecto: string): string {
+  const cuentas = new Map<string, number>()
+  for (const p of lista) {
+    if (p.prioridad === 'emergencia') continue
+    cuentas.set(p.semana_inicio, (cuentas.get(p.semana_inicio) ?? 0) + 1)
+  }
+  if (cuentas.size === 0) return porDefecto
+  return [...cuentas.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0]
+}

@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { estadoVentana, vivasDeLaSemana } from '../../lib/api'
-import { rangoSemana } from '../../lib/fechas'
+import { addDays } from 'date-fns'
+import { aFecha, aISO, rangoSemana } from '../../lib/fechas'
+import { semanaDominante } from '../../lib/orden'
 import {
   BarraSuperior,
   Cargando,
@@ -16,16 +18,19 @@ export default function Semana() {
   const ventana = useQuery({ queryKey: ['ventana'], queryFn: estadoVentana })
   const lista = useQuery({ queryKey: ['vivas'], queryFn: vivasDeLaSemana })
 
+  const semana = ventana.data
+    ? semanaDominante(lista.data ?? [], ventana.data.semana_inicio)
+    : null
+  const semanaFin = semana ? aISO(addDays(aFecha(semana), 6)) : null
+
   return (
     <Pantalla>
       <Contenido className="flex flex-col">
         <BarraSuperior
           titulo="La semana"
           derecha={
-            ventana.data ? (
-              <span className="text-[12px] text-sobre-pared-2">
-                {rangoSemana(ventana.data.semana_inicio, ventana.data.semana_fin)}
-              </span>
+            semana && semanaFin ? (
+              <span className="text-[12px] text-sobre-pared-2">{rangoSemana(semana, semanaFin)}</span>
             ) : undefined
           }
         />
@@ -33,8 +38,8 @@ export default function Semana() {
         {(lista.isLoading || ventana.isLoading) && <Cargando cuantos={2} />}
         {(lista.isError || ventana.isError) && <ErrorPantalla alReintentar={() => void lista.refetch()} />}
 
-        {lista.data && ventana.data && lista.data.length > 0 && (
-          <TableroSemana peticiones={lista.data} semanaInicio={ventana.data.semana_inicio} detallado />
+        {lista.data && semana && lista.data.length > 0 && (
+          <TableroSemana peticiones={lista.data} semanaInicio={semana} detallado />
         )}
 
         {lista.data && lista.data.length === 0 && (

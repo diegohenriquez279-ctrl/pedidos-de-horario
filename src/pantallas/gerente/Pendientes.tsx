@@ -5,7 +5,7 @@ import { Check, X } from '@phosphor-icons/react'
 import { estadoVentana, pendientes, resolverPeticion, vivasDeLaSemana } from '../../lib/api'
 import { mensajeDeError } from '../../lib/errores'
 import { diaConMes, hace } from '../../lib/fechas'
-import { posicionesPorArea } from '../../lib/orden'
+import { posicionesPorArea, semanaDominante } from '../../lib/orden'
 import { ETIQUETA_AREA, ETIQUETA_CONTRATO_CORTA, type Estado, type PeticionDeLaGerente } from '../../lib/tipos'
 import {
   Cargando,
@@ -39,6 +39,9 @@ export default function Pendientes() {
   })
 
   const posiciones = posicionesPorArea(lista.data ?? [])
+  const semana = ventana.data
+    ? semanaDominante(vivas.data ?? lista.data ?? [], ventana.data.semana_inicio)
+    : null
 
   return (
     <Pantalla>
@@ -47,9 +50,7 @@ export default function Pendientes() {
           <h1 className="flex-1 text-[22px] leading-tight font-extrabold tracking-[-0.03em]">
             Por resolver
             <span className="mt-0.5 block text-[12.5px] font-medium text-[#ffd5db]">
-              {ventana.data
-                ? `Semana del ${diaConMes(ventana.data.semana_inicio)}`
-                : 'Cargando la semana…'}
+              {semana ? `Semana del ${diaConMes(semana)}` : 'Cargando la semana…'}
             </span>
           </h1>
           <span className="grid size-[50px] flex-none place-items-center rounded-full bg-rojo text-[21px] font-extrabold text-white">
@@ -60,12 +61,9 @@ export default function Pendientes() {
         {lista.isLoading && <Cargando />}
         {lista.isError && <ErrorPantalla alReintentar={() => void lista.refetch()} />}
 
-        {lista.data && ventana.data && lista.data.length > 0 && (
+        {lista.data && semana && lista.data.length > 0 && (
           <>
-            <TableroSemana
-              peticiones={vivas.data ?? lista.data}
-              semanaInicio={ventana.data.semana_inicio}
-            />
+            <TableroSemana peticiones={vivas.data ?? lista.data} semanaInicio={semana} />
 
             <div className="px-4 pt-6 pb-2">
               <h2 className="mb-0.5 text-[17.5px] font-extrabold tracking-tight text-sobre-pared">La fila</h2>
