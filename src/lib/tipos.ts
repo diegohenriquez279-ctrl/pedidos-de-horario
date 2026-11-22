@@ -7,7 +7,8 @@ export type Estado = 'pendiente' | 'aprobada' | 'rechazada'
 
 export interface Perfil {
   id: string
-  tienda_id: string
+  /** null cuando la gerente lo sacó del restaurante: la cuenta vive, la tienda no. */
+  tienda_id: string | null
   usuario: string
   nombre_completo: string
   area: Area

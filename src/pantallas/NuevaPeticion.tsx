@@ -95,7 +95,7 @@ export default function NuevaPeticion({
   const guardar = useMutation({
     mutationFn: async () => {
       let ruta = rutaPrevia
-      if (dibujoBlob && perfil) {
+      if (dibujoBlob && perfil?.tienda_id) {
         ruta = await subirDibujo(dibujoBlob, perfil.tienda_id, perfil.id)
       }
       if (editando && id) {

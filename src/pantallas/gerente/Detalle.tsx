@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { emergenciasDelMes, resolverPeticion, unaPeticion } from '../../lib/api'
+import { cambiarRespuesta, emergenciasDelMes, resolverPeticion, unaPeticion } from '../../lib/api'
 import { mensajeDeError } from '../../lib/errores'
 import { diaConMes, horaCorta } from '../../lib/fechas'
 import { ETIQUETA_AREA, ETIQUETA_CONTRATO, ETIQUETA_TIPO, type Estado } from '../../lib/tipos'
@@ -27,6 +27,7 @@ export default function Detalle() {
   const navegar = useNavigate()
   const qc = useQueryClient()
   const [comentario, setComentario] = useState('')
+  const [cambiando, setCambiando] = useState(false)
 
   const pet = useQuery({
     queryKey: ['peticion', id],
@@ -43,10 +44,19 @@ export default function Detalle() {
   })
 
   const resolver = useMutation({
-    mutationFn: (estado: Estado) => resolverPeticion(id!, estado, comentario.trim() || null),
+    mutationFn: (estado: Estado) =>
+      cambiando || pet.data?.estado !== 'pendiente'
+        ? cambiarRespuesta(id!, estado, comentario.trim() || null)
+        : resolverPeticion(id!, estado, comentario.trim() || null),
     onSuccess: async (_d, estado) => {
       await qc.invalidateQueries()
-      toast(estado === 'aprobada' ? 'Aprobada' : 'Respondida')
+      toast(
+        estado === 'pendiente'
+          ? 'Volvió a la fila'
+          : estado === 'aprobada'
+            ? 'Aprobada'
+            : 'Respondida',
+      )
       navegar('/gerente')
     },
     onError: (e) => toast(mensajeDeError(e)),
@@ -138,7 +148,7 @@ export default function Detalle() {
           </Papel>
         </div>
 
-        {resuelta ? (
+        {resuelta && !cambiando ? (
           <div className="px-4 pt-5">
             <Papel cinta={false}>
               <div className="flex items-center gap-2.5">
@@ -150,12 +160,37 @@ export default function Detalle() {
               {p.comentario_gerente && (
                 <p className="mano mt-3 text-[18px] font-bold text-rojo">{p.comentario_gerente}</p>
               )}
+              <div className="mt-4 grid gap-2 border-t border-dashed border-linea pt-3.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setComentario(p.comentario_gerente ?? '')
+                    setCambiando(true)
+                  }}
+                  className="min-h-11 w-full rounded-papel border border-borde text-[14px] font-bold text-grafito"
+                >
+                  Cambiar mi respuesta
+                </button>
+                <button
+                  type="button"
+                  disabled={resolver.isPending}
+                  onClick={() => resolver.mutate('pendiente')}
+                  className="min-h-11 w-full rounded-papel text-[14px] font-bold text-suave underline underline-offset-[3px] disabled:opacity-60"
+                >
+                  Devolverla a la fila
+                </button>
+              </div>
             </Papel>
           </div>
         ) : (
           <>
             <div className="px-4 pt-5">
               <Papel cinta={false}>
+                {cambiando && (
+                  <p className="mb-3 text-[13.5px] leading-snug font-bold text-rojo-hondo">
+                    Estás cambiando una respuesta que ya diste.
+                  </p>
+                )}
                 <Etiqueta>Escribile algo (opcional)</Etiqueta>
                 <CampoTexto
                   value={comentario}

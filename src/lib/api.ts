@@ -222,6 +222,42 @@ export async function resolverPeticion(id: string, estado: Estado, comentario: s
   reventar(error)
 }
 
+/** Cambiar una respuesta ya dada. Con 'pendiente' la devuelve a la fila. */
+export async function cambiarRespuesta(id: string, estado: Estado, comentario: string | null) {
+  const { error } = await supabase.rpc('cambiar_respuesta', {
+    p_id: id,
+    p_estado: estado,
+    p_comentario: comentario,
+  })
+  reventar(error)
+}
+
+/* -------------------------------------------------------- la gente */
+
+export async function genteDeLaTienda(): Promise<Perfil[]> {
+  const { data, error } = await supabase
+    .from('perfiles')
+    .select('*')
+    .order('area', { ascending: true })
+    .order('nombre_completo', { ascending: true })
+  reventar(error)
+  return (data ?? []) as Perfil[]
+}
+
+export async function quitarDelRestaurante(empleadoId: string) {
+  const { error } = await supabase.rpc('quitar_del_restaurante', { p_empleado: empleadoId })
+  reventar(error)
+}
+
+/** Para quien quedó sin restaurante: entrar a uno con su código. */
+export async function unirmeATienda(codigo: string): Promise<string> {
+  const { data, error } = await supabase.rpc('unirme_a_tienda', {
+    p_codigo: normalizarCodigo(codigo),
+  })
+  reventar(error)
+  return data as string
+}
+
 export async function emergenciasDelMes(empleadoId: string): Promise<number> {
   const { data, error } = await supabase.rpc('emergencias_del_mes', { p_empleado: empleadoId })
   reventar(error)

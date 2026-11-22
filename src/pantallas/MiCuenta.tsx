@@ -1,4 +1,5 @@
-import { SignOut } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
+import { CaretRight, SignOut, Users } from '@phosphor-icons/react'
 import { useSesion } from '../sesion'
 import { salir } from '../lib/api'
 import { ETIQUETA_AREA, ETIQUETA_CONTRATO } from '../lib/tipos'
@@ -30,6 +31,24 @@ export default function MiCuenta() {
             <Dato titulo="Contrato" valor={ETIQUETA_CONTRATO[perfil.contrato]} />
             {perfil.rol === 'gerente' && <Dato titulo="Rol" valor="Gerente" />}
           </Papel>
+
+          {perfil.rol === 'gerente' && (
+            <Link
+              to="/gerente/gente"
+              className="mt-5 flex min-h-[60px] items-center gap-3 rounded-papel bg-papel px-4 py-3.5 shadow-papel transition active:translate-y-px"
+            >
+              <Users size={25} className="flex-none text-vino" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-[17px] leading-tight font-extrabold tracking-tight text-vino">
+                  La gente de la tienda
+                </span>
+                <span className="mt-0.5 block text-[13px] leading-snug text-grafito">
+                  Ver quién está y sacar a quien ya se fue
+                </span>
+              </span>
+              <CaretRight size={19} className="flex-none text-grafito opacity-70" />
+            </Link>
+          )}
 
           <p className="mt-4 px-1 text-[13px] leading-relaxed text-sobre-pared-2">
             {perfil.rol === 'gerente'

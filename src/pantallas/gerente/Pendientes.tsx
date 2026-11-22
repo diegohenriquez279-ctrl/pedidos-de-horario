@@ -1,7 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { estadoVentana, pendientes, resolverPeticion, vivasDeLaSemana } from '../../lib/api'
+import {
+  cambiarRespuesta,
+  estadoVentana,
+  pendientes,
+  resolverPeticion,
+  vivasDeLaSemana,
+} from '../../lib/api'
 import { mensajeDeError } from '../../lib/errores'
 import { diaConMes } from '../../lib/fechas'
 import { posicionesPorArea, semanaDominante } from '../../lib/orden'
@@ -26,11 +32,23 @@ export default function Pendientes() {
   const lista = useQuery({ queryKey: ['pendientes'], queryFn: pendientes })
   const vivas = useQuery({ queryKey: ['vivas'], queryFn: vivasDeLaSemana })
 
+  const deshacer = useMutation({
+    mutationFn: (id: string) => cambiarRespuesta(id, 'pendiente', null),
+    onSuccess: async () => {
+      await qc.invalidateQueries()
+      toast('Volvió a la fila')
+    },
+    onError: (e) => toast(mensajeDeError(e)),
+  })
+
   const resolver = useMutation({
     mutationFn: ({ id, estado }: { id: string; estado: Estado }) => resolverPeticion(id, estado, null),
     onSuccess: async (_d, v) => {
       await qc.invalidateQueries()
-      toast(v.estado === 'aprobada' ? 'Aprobada' : 'Respondida')
+      toast(v.estado === 'aprobada' ? 'Aprobada' : 'Respondida', {
+        duration: 8000,
+        action: { label: 'Deshacer', onClick: () => deshacer.mutate(v.id) },
+      })
     },
     onError: (e) => toast(mensajeDeError(e)),
   })

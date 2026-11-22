@@ -14,6 +14,9 @@ const MENSAJES: Record<string, string> = {
 
   // peticiones
   SIN_PERFIL: 'No encontramos tu cuenta. Cerrá sesión y volvé a entrar.',
+  SIN_TIENDA: 'No estás en ningún restaurante. Poné el código del tuyo para entrar.',
+  YA_TENES_TIENDA: 'Ya estás en un restaurante.',
+  NO_TE_PODES_QUITAR: 'No te podés sacar a vos misma del restaurante.',
   CUENTA_INACTIVA: 'Tu cuenta está desactivada. Hablá con tu gerente.',
   VENTANA_CERRADA: 'Las peticiones ya cerraron esta semana. Volvé el lunes.',
   TEXTO_VACIO: 'Escribí qué querés pedir.',

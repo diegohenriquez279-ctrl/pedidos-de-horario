@@ -4,6 +4,7 @@ import { salir } from './lib/api'
 import { Boton, Cargando, Centro, Pantalla } from './componentes/piezas'
 import Entrada from './pantallas/Entrada'
 import Registro from './pantallas/Registro'
+import ElegirTienda from './pantallas/ElegirTienda'
 import Inicio from './pantallas/Inicio'
 import NuevaPeticion from './pantallas/NuevaPeticion'
 import MisPapelitos from './pantallas/MisPapelitos'
@@ -12,6 +13,7 @@ import Pendientes from './pantallas/gerente/Pendientes'
 import Detalle from './pantallas/gerente/Detalle'
 import Resueltas from './pantallas/gerente/Resueltas'
 import Semana from './pantallas/gerente/Semana'
+import MiGente from './pantallas/gerente/MiGente'
 
 function Aviso({ titulo, texto }: { titulo: string; texto: string }) {
   return (
@@ -58,6 +60,12 @@ export default function App() {
     )
   }
 
+  // Tiene cuenta pero nadie la tiene en su tienda: la gerente la sacó, o
+  // todavía no entró a ninguna.
+  if (!perfil.tienda_id) {
+    return <ElegirTienda />
+  }
+
   if (!perfil.activo) {
     return (
       <Aviso
@@ -74,6 +82,7 @@ export default function App() {
         <Route path="/gerente/semana" element={<Semana />} />
         <Route path="/gerente/resueltas" element={<Resueltas />} />
         <Route path="/gerente/peticion/:id" element={<Detalle />} />
+        <Route path="/gerente/gente" element={<MiGente />} />
         <Route path="/mi-cuenta" element={<MiCuenta />} />
         <Route path="*" element={<Navigate to="/gerente" replace />} />
       </Routes>
