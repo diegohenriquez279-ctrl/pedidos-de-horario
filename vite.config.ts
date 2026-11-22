@@ -2,10 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// En GitHub Pages la app vive en /<nombre-del-repo>/.
-// En local, en la raíz.
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/pedidos-de-horario/' : '/',
+// Con dominio propio (peticion.xyz) la app vive en la raíz, igual que en local.
+// Si algún día se vuelve a servir desde diegohenriquez279-ctrl.github.io,
+// hay que poner base: '/pedidos-de-horario/' para las compilaciones.
+export default defineConfig(() => ({
+  base: '/',
   plugins: [react(), tailwindcss()],
   build: {
     target: 'es2020',
