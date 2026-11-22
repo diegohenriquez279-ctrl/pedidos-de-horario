@@ -62,7 +62,7 @@ export default function TarjetaGerente({
           ))}
         </div>
 
-        {peticion.dibujo_path && <MiniDibujo ruta={peticion.dibujo_path} />}
+        {peticion.dibujo_path && <MiniDibujo ruta={peticion.dibujo_path} texto="Mandó un dibujo" />}
       </button>
 
       {alResolver && !resuelta && (

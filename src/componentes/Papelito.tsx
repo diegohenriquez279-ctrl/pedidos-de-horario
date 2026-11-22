@@ -14,7 +14,7 @@ export function useDibujo(ruta: string | null) {
   })
 }
 
-export function MiniDibujo({ ruta }: { ruta: string }) {
+export function MiniDibujo({ ruta, texto = 'Le hiciste un dibujo' }: { ruta: string; texto?: string }) {
   const { data } = useDibujo(ruta)
   return (
     <div className="mt-3 flex items-center gap-2.5 text-[12.5px] text-grafito">
@@ -25,7 +25,7 @@ export function MiniDibujo({ ruta }: { ruta: string }) {
           <span className="hueso h-full w-full" />
         )}
       </span>
-      <span>Le hiciste un dibujo</span>
+      <span>{texto}</span>
     </div>
   )
 }
